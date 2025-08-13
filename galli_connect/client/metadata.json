@@ -1,0 +1,5 @@
+{
+  "name": "Local Commute Aggregator",
+  "description": "An application for booking local shuttle services, with AI-powered route optimization for drivers. It helps map popular informal commute routes, allowing users to view timings, book seats, and pay digitally, while helping drivers track demand.",
+  "requestFramePermissions": []
+}
