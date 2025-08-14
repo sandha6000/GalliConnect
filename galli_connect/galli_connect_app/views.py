@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
+from .models import UserProfile  # import the profile model
+
 import json
 from django.http import JsonResponse
 
@@ -21,24 +23,29 @@ def signup(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            name = data.get('name')        # matches client payload
+            name = data.get('name')
             email = data.get('email')
             password = data.get('password')
-            role = data.get('role')        # not stored by default in Django's User
+            role = data.get('role')
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid JSON in request body."}, status=400)
 
-        if not name or not email or not password:
-            return JsonResponse({"message": "Name, email, and password are required."}, status=400)
+        if not name or not email or not password or not role:
+            return JsonResponse({"message": "All fields are required."}, status=400)
 
-        if User.objects.filter(username=email).exists():
-            return JsonResponse({"message": "User already exists."}, status=409)
+        # Check if same email already exists for this role
+        existing_user = User.objects.filter(email=email, userprofile__role=role).first()
+        if existing_user:
+            return JsonResponse({"message": f"User with email {email} and role {role} already exists."}, status=409)
 
-        user = User.objects.create_user(username=email, email=email, password=password)
+        # Create the Django User
+        user = User.objects.create_user(username=f"{email}_{role}", email=email, password=password)
         user.first_name = name
         user.save()
 
-        # This matches your client's expected User type
+        # Create linked profile with role
+        UserProfile.objects.create(user=user, role=role)
+
         return JsonResponse({
             "id": user.id,
             "name": name,
