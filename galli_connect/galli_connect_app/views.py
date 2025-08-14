@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
+import json
+from django.http import JsonResponse
 
 # Create your views here.
 def home(request):
@@ -19,54 +21,66 @@ def signup(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
+            name = data.get('name')        # matches client payload
+            email = data.get('email')
             password = data.get('password')
-            confirm_password = data.get('confirm_password')
+            role = data.get('role')        # not stored by default in Django's User
         except json.JSONDecodeError:
-            return HttpResponse("Invalid JSON in request body.", status=400)
+            return JsonResponse({"message": "Invalid JSON in request body."}, status=400)
 
+        if not name or not email or not password:
+            return JsonResponse({"message": "Name, email, and password are required."}, status=400)
 
+        if User.objects.filter(username=email).exists():
+            return JsonResponse({"message": "User already exists."}, status=409)
 
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match")
-            return redirect('signup')
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-            return redirect('signup')
-
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
+        user.first_name = name
         user.save()
-        messages.success(request, "Account created successfully! Please login.")
-        return HttpResponse("Successfully created user", status = 200)
 
-    return render(request, "signup.html")
+        # This matches your client's expected User type
+        return JsonResponse({
+            "id": user.id,
+            "name": name,
+            "email": email,
+            "role": role
+        }, status=201)
+
+    return JsonResponse({"message": "Method not allowed."}, status=405)
+
 
 @csrf_exempt
 def login(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            username = data.get('username')
+            email = data.get('email')   # match client login payload
             password = data.get('password')
+            role = data.get('role')
         except json.JSONDecodeError:
-            return HttpResponse("Invalid JSON in request body.", status=400)
+            return JsonResponse({"message": "Invalid JSON in request body."}, status=400)
 
-        # username = request.POST.get("username")
-        # password = request.POST.get("password")
+        if not email or not password:
+            return JsonResponse({"message": "Email and password are required."}, status=400)
 
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            auth_login(request, user)
-            messages.success(request, "Login successful!")
-            return HttpResponse("Login successful", status=200)
-            # return redirect('home')
-        else:
-            messages.error(request, "Invalid username or password")
-            return HttpResponse("Invalid username or password", status=400)
-            # return redirect('login')
+        # authenticate() uses username, not email, so we fetch username by email
+        try:
+            user_obj = User.objects.get(email=email)
+            user = authenticate(username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            return JsonResponse({"message": "Invalid credentials."}, status=401)
 
-    return render(request, "login.html")
+        if user is None:
+            return JsonResponse({"message": "Invalid credentials."}, status=401)
+
+        return JsonResponse({
+            "id": user.id,
+            "name": user.first_name or user.username,
+            "email": user.email,
+            "role": role
+        }, status=200)
+
+    return JsonResponse({"message": "Method not allowed."}, status=405)
 
 
 def logout_view(request):
