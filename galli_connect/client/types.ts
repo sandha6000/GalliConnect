@@ -54,3 +54,22 @@ export interface AiAnalysisResult {
   demandHotspots: DemandHotspot[];
   optimizedRoute: OptimizedRouteData;
 }
+
+export enum WeekDay {
+    MONDAY = 'Mon',
+    TUESDAY = 'Tue',
+    WEDNESDAY = 'Wed',
+    THURSDAY = 'Thu',
+    FRIDAY = 'Fri',
+    SATURDAY = 'Sat',
+    SUNDAY = 'Sun',
+}
+
+export interface DriverRoute {
+  id: string;
+  from: string;
+  to: string;
+  departureTime: string;
+  costPerSeat: number;
+  activeDays: WeekDay[];
+}

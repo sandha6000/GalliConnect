@@ -123,7 +123,6 @@ export const signup = async (
     return data as User;
 };
 
-
 export const findShuttles = async (from: string, to: string): Promise<Shuttle[]> => {
   console.log(`Searching for shuttles from ${from} to ${to}`);
   const results = mockShuttles.filter(s => s.route[0].toLowerCase().includes(from.toLowerCase()) && s.route[1].toLowerCase().includes(to.toLowerCase()));

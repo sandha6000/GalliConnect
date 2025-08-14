@@ -4,11 +4,12 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/static/', // this tells Vite all assets live at /static/
+  base: '/static/', // All assets served from Django's STATIC_URL
   build: {
     outDir: resolve(__dirname, '../templates'),
     emptyOutDir: true,
     manifest: true,
+    sourcemap: true, // ✅ Source maps in dev builds only
     rollupOptions: {
       input: resolve(__dirname, 'index.html'),
     },

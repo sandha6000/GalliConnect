@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from .models import UserProfile  # import the profile model
+from .models import DriverRoute
+
 
 import json
 from django.http import JsonResponse
@@ -61,33 +63,163 @@ def login(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            email = data.get('email')   # match client login payload
+            email = data.get('email')
             password = data.get('password')
-            role = data.get('role')
+            role = data.get('role')  # "DRIVER" or "PASSENGER"
         except json.JSONDecodeError:
-            return JsonResponse({"message": "Invalid JSON in request body."}, status=400)
+            return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
 
-        if not email or not password:
-            return JsonResponse({"message": "Email and password are required."}, status=400)
+        if not email or not password or not role:
+            return JsonResponse({"error": "Email, password, and role are required"}, status=400)
 
-        # authenticate() uses username, not email, so we fetch username by email
+        # Find user with matching email AND role
+        user_obj = User.objects.filter(email=email, userprofile__role=role).first()
+        if not user_obj:
+            return JsonResponse({"error": "No user found with given email and role"}, status=404)
+
+        # Authenticate
+        user = authenticate(username=user_obj.username, password=password)
+        if user:
+            auth_login(request, user)
+            return JsonResponse({
+                "message": "Login successful",
+                "id": user.id,  # unique internal id
+                "role": role,
+                "name": user.first_name,
+            }, status=200)
+        else:
+            return JsonResponse({"error": "Invalid credentials"}, status=401)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+def add_driver_route(request):
+    if request.method == "POST":
         try:
-            user_obj = User.objects.get(email=email)
-            user = authenticate(username=user_obj.username, password=password)
-        except User.DoesNotExist:
-            return JsonResponse({"message": "Invalid credentials."}, status=401)
+            data = json.loads(request.body)
+            driver_id = data.get("driverId")
+            from_location = data.get("from")
+            to_location = data.get("to")
+            departure_time = data.get("departureTime")
+            cost_per_seat = data.get("costPerSeat")
+            active_days = data.get("activeDays")
 
-        if user is None:
-            return JsonResponse({"message": "Invalid credentials."}, status=401)
+            driver = User.objects.filter(id=driver_id).first()
+            if not driver:
+                return JsonResponse({"error": "Driver not found"}, status=404)
+
+            route = DriverRoute.objects.create(
+                driver=driver,
+                from_location=from_location,
+                to_location=to_location,
+                departure_time=departure_time,
+                cost_per_seat=cost_per_seat,
+                active_days=active_days
+            )
+
+            return JsonResponse({
+                "id": route.id,
+                "from": route.from_location,
+                "to": route.to_location,
+                "departureTime": route.departure_time,
+                "costPerSeat": str(route.cost_per_seat),
+                "activeDays": route.active_days
+            }, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+
+
+
+@csrf_exempt
+def get_driver_routes(request, driver_id):
+    if request.method == "GET":
+        driver = User.objects.filter(id=driver_id).first()
+        if not driver:
+            return JsonResponse({"error": "Driver not found"}, status=404)
+
+        routes = DriverRoute.objects.filter(driver=driver)
+        route_list = [
+            {
+                "id": route.id,
+                "from_location": route.from_location,
+                "to_location": route.to_location,
+                "departure_time": route.departure_time,
+                "cost_per_seat": str(route.cost_per_seat),
+                "active_days": route.active_days
+            }
+            for route in routes
+        ]
+
+        return JsonResponse({"routes": route_list}, status=200)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import DriverRoute
+from django.contrib.auth.models import User
+import json
+
+@csrf_exempt
+def update_driver_route(request, driver_id, route_id):
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+        driver = User.objects.filter(id=driver_id).first()
+        if not driver:
+            return JsonResponse({"error": "Driver not found"}, status=404)
+
+        route = DriverRoute.objects.filter(id=route_id, driver=driver).first()
+        if not route:
+            return JsonResponse({"error": "Route not found for this driver"}, status=404)
+
+        # Update fields
+        route.from_location = data.get("from_location", route.from_location)
+        route.to_location = data.get("to_location", route.to_location)
+        route.departure_time = data.get("departure_time", route.departure_time)
+        route.cost_per_seat = data.get("cost_per_seat", route.cost_per_seat)
+        route.active_days = data.get("active_days", route.active_days)
+        route.save()
 
         return JsonResponse({
-            "id": user.id,
-            "name": user.first_name or user.username,
-            "email": user.email,
-            "role": role
+            "id": route.id,
+            "from_location": route.from_location,
+            "to_location": route.to_location,
+            "departure_time": route.departure_time,
+            "cost_per_seat": str(route.cost_per_seat),
+            "active_days": route.active_days
         }, status=200)
 
-    return JsonResponse({"message": "Method not allowed."}, status=405)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import DriverRoute
+from django.contrib.auth.models import User
+
+@csrf_exempt
+def delete_driver_route(request, driver_id, route_id):
+    if request.method == "DELETE":
+        driver = User.objects.filter(id=driver_id).first()
+        if not driver:
+            return JsonResponse({"error": "Driver not found"}, status=404)
+
+        route = DriverRoute.objects.filter(id=route_id, driver=driver).first()
+        if not route:
+            return JsonResponse({"error": "Route not found for this driver"}, status=404)
+
+        route.delete()
+        return JsonResponse({"message": "Route deleted successfully"}, status=200)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 def logout_view(request):

@@ -74,7 +74,7 @@ const App: React.FC = () => {
   if (currentUser) {
       const dashboard = currentUser.role === UserMode.PASSENGER 
           ? <PassengerView /> 
-          : <DriverView />;
+          : <DriverView currentUser={currentUser} />;
       
       return (
           <div className="min-h-screen bg-slate-100">

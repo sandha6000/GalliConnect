@@ -32,8 +32,8 @@ const RoleSelectorButton: React.FC<{
 };
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSwitchToSignup }) => {
-    const [email, setEmail] = useState('sita@example.com');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('sandha6000@gmail.com');
+    const [password, setPassword] = useState('12345678');
     const [role, setRole] = useState<UserMode>(UserMode.PASSENGER);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

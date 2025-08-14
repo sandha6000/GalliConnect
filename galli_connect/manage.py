@@ -40,7 +40,7 @@ def build_frontend():
 
     # Always build
     print("⚡ Building frontend with Vite...")
-    subprocess.run(["npm", "run", "build"], cwd=client_dir, check=True)
+    subprocess.run(["npm", "run", "build:dev"], cwd=client_dir, check=True)
     print("✅ Frontend build complete!")
 
 def main():
