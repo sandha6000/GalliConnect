@@ -157,7 +157,7 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
         )}
       </div>
 
-      <div className="flex justify-between items-center mb-4 border-t pt-8 mt-8">
+      {/* <div className="flex justify-between items-center mb-4 border-t pt-8 mt-8">
         <h2 className="text-2xl font-bold text-slate-800">AI Route Insights</h2>
         <Button onClick={fetchAndAnalyze} isLoading={isLoadingAnalysis} variant="secondary">
           Refresh AI Analysis
@@ -172,9 +172,9 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
             <h3 className="text-xl font-semibold text-slate-700">No analysis available.</h3>
             <p className="text-slate-500 mt-2">Click "Refresh Analysis" to get started.</p>
         </div>
-      )}
+      )} */}
 
-      {analysis && (
+      {/* {analysis && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
             <DemandHeatmap hotspots={analysis.demandHotspots} />
@@ -183,7 +183,7 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
             <OptimizedRouteCard routeData={analysis.optimizedRoute} />
           </div>
         </div>
-      )}
+      )} */}
 
       <ManageRouteModal 
         isOpen={isRouteModalOpen}
