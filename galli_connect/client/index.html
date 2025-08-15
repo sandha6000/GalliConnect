@@ -4,14 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Local Commute Aggregator</title>
+    <title>Nagarayatra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --color-primary: #F97316; /* Orange 500 */
+        --color-primary-hover: #EA580C; /* Orange 600 */
+        --color-primary-light: #FFEDD5; /* Orange 100 */
+        --color-primary-dark: #C2410C; /* Orange 700 */
+        --color-bg-base: #FEFBF6; /* Creamy off-white */
+      }
       body {
         font-family: 'Roboto', sans-serif;
+        background-color: var(--color-bg-base);
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
       }
     </style>
   <script type="importmap">
@@ -24,9 +39,28 @@
   }
 }
 </script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: 'var(--color-primary)',
+              hover: 'var(--color-primary-hover)',
+              light: 'var(--color-primary-light)',
+              dark: 'var(--color-primary-dark)',
+            },
+            bg: {
+              base: 'var(--color-bg-base)',
+            }
+          }
+        }
+      }
+    }
+  </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-slate-50">
+  <body class="bg-bg-base text-slate-700">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
