@@ -11,6 +11,7 @@ import { OptimizedRouteCard } from './OptimizedRouteCard';
 import { ManageRouteModal } from './ManageRouteModal';
 import { Card } from './common/Card';
 import { DriverRouteCard } from './DriverRouteCard';
+import { ViewBookingsModal } from './ViewBookingsModal';
 
 interface DriverViewProps {
   currentUser: User;
@@ -23,10 +24,14 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
   
   const [driverRoutes, setDriverRoutes] = useState<DriverRoute[]>([]);
   const [isLoadingRoutes, setIsLoadingRoutes] = useState(true);
+  
   const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
   const [isSavingRoute, setIsSavingRoute] = useState(false);
   const [routeToEdit, setRouteToEdit] = useState<DriverRoute | null>(null);
   const [deletingRouteId, setDeletingRouteId] = useState<string | null>(null);
+
+  const [isBookingsModalOpen, setIsBookingsModalOpen] = useState(false);
+  const [routeForBookings, setRouteForBookings] = useState<DriverRoute | null>(null);
 
 
   const fetchAndAnalyze = async () => {
@@ -108,6 +113,11 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
     }
   };
 
+  const handleViewBookings = (route: DriverRoute) => {
+    setRouteForBookings(route);
+    setIsBookingsModalOpen(true);
+  };
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <div className="flex justify-between items-center mb-6">
@@ -131,6 +141,7 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
                         route={route} 
                         onEdit={handleOpenEditModal} 
                         onDelete={handleDeleteRoute}
+                        onViewBookings={handleViewBookings}
                         isDeleting={deletingRouteId === route.id}
                     />
                 ))}
@@ -181,6 +192,13 @@ export const DriverView: React.FC<DriverViewProps> = ({ currentUser }) => {
         currentRoute={routeToEdit}
         isSaving={isSavingRoute}
         title={routeToEdit ? 'Edit Route' : 'Add New Route'}
+      />
+
+      <ViewBookingsModal 
+        currentUser={currentUser}
+        isOpen={isBookingsModalOpen}
+        onClose={() => setIsBookingsModalOpen(false)}
+        route={routeForBookings}
       />
     </div>
   );

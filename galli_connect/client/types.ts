@@ -70,3 +70,10 @@ export interface PassengerRouteView extends DriverRoute {
     driverId: string;
     driverName: string;
 }
+
+export interface PassengerBookingInfo {
+  passengerName: string;
+  seats: number;
+}
+
+export type RouteBookings = Record<string, PassengerBookingInfo[]>;

@@ -1,5 +1,5 @@
 
-import type { DriverRoute } from '../types';
+import type { DriverRoute,RouteBookings } from '../types';
 
 // Simulate network latency
 const delay = <T,>(data: T, ms = 500): Promise<T> => {
@@ -114,5 +114,25 @@ export const deleteDriverRoute = async (driverId: number, routeId: number): Prom
     if (!response.ok) {
         throw new Error(`Failed to delete route: ${response.statusText}`);
 }
+};
+
+export const getRouteBookings = async (
+    driverId: string,
+    routeId: string
+): Promise<RouteBookings> => {
+    console.log(`Fetching bookings for route ${routeId} for driver ${driverId}`);
+
+    const response = await fetch(`/api/driver/${driverId}/routes/${routeId}/bookings`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch route bookings');
+    }
+
+    const data = await response.json();
+    return data as RouteBookings;
 };
 

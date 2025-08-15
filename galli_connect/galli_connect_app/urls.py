@@ -12,8 +12,7 @@ urlpatterns = [
     path('api/delete-driver-route/<int:driver_id>/<int:route_id>/', views.delete_driver_route, name='delete_driver_route'),
     path('api/routes/search', views.search_routes, name='search_routes'),
     path('api/book-seats', views.book_seats, name='book_seats'),
-
-
+    path('api/driver/<int:driver_id>/routes/<int:route_id>/bookings',views.get_route_bookings,name='get_route_bookings')
 ]
 
 

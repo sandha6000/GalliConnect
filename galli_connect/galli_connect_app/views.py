@@ -328,6 +328,30 @@ def book_seats(request):
         return JsonResponse({"message": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"message": str(e)}, status=500)
+    
+@csrf_exempt
+def get_route_bookings(request, driver_id, route_id):
+    try:
+        # Ensure this route belongs to the driver
+        route = DriverRoute.objects.get(id=route_id, driver_id=driver_id)
+    except DriverRoute.DoesNotExist:
+        return JsonResponse({"error": "Route not found or unauthorized"}, status=404)
+
+    # Fetch all passenger bookings for this route
+    bookings = PassengerBooking.objects.filter(route=route).select_related('passenger')
+
+    # Group by date { "YYYY-MM-DD": [ {passengerId, passengerName, seatsBooked} ] }
+    grouped_bookings = {}
+    for booking in bookings:
+        date_str = booking.date.strftime("%Y-%m-%d")
+        passenger_info = {
+            "passengerId": booking.passenger.id,
+            "passengerName": booking.passenger.first_name,
+            "seatsBooked": booking.seats_booked
+        }
+        grouped_bookings.setdefault(date_str, []).append(passenger_info)
+
+    return JsonResponse(grouped_bookings)
 
 
 def logout_view(request):

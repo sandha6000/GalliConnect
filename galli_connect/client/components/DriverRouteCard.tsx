@@ -9,6 +9,7 @@ interface DriverRouteCardProps {
     route: DriverRoute;
     onEdit: (route: DriverRoute) => void;
     onDelete: (routeId: string) => void;
+    onViewBookings: (route: DriverRoute) => void;
     isDeleting: boolean;
 }
 
@@ -19,7 +20,7 @@ const getAvailabilityColor = (available: number, total: number) => {
     return 'bg-red-100 text-red-800';
 };
 
-export const DriverRouteCard: React.FC<DriverRouteCardProps> = ({ route, onEdit, onDelete, isDeleting }) => {
+export const DriverRouteCard: React.FC<DriverRouteCardProps> = ({ route, onEdit, onDelete, onViewBookings, isDeleting }) => {
     const today = new Date().toISOString().split('T')[0];
     const upcomingDays = route.activeDays.filter(day => day.date >= today);
 
@@ -63,7 +64,8 @@ export const DriverRouteCard: React.FC<DriverRouteCardProps> = ({ route, onEdit,
                                 }) : <p className="text-sm text-slate-500">No upcoming active days.</p>}
                             </div>
                         </div>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex gap-2 items-center flex-shrink-0">
+                            <Button variant="ghost" onClick={() => onViewBookings(route)}>View Bookings</Button>
                             <Button variant="secondary" onClick={() => onEdit(route)}>Edit</Button>
                             <Button 
                                 variant="ghost" 
