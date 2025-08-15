@@ -1,33 +1,13 @@
-import type { DriverRoute, WeekDay } from '../types';
+
+import type { DriverRoute } from '../types';
+import { mockDriverRoutes } from './PassengerServiceInteractor';
 
 // Simulate network latency
 const delay = <T,>(data: T, ms = 500): Promise<T> => {
   return new Promise(resolve => setTimeout(() => resolve(data), ms));
 };
 
-// Mock database for a driver's routes, keyed by driver ID
-const mockDriverRoutes: Record<string, DriverRoute[]> = {
-    'user-123': [ // This ID matches the mock driver from services/api.ts
-    {
-        id: 'route-123',
-        from: 'Peenya Industrial Area',
-        to: 'Majestic Bus Stand',
-        departureTime: '08:00 AM',
-        costPerSeat: 50,
-        activeDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as WeekDay[],
-    },
-    {
-        id: 'route-456',
-        from: 'Electronic City',
-        to: 'Marathahalli',
-        departureTime: '09:00 AM',
-        costPerSeat: 45,
-        activeDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as WeekDay[],
-    }
-    ]
-};
-
-export const getDriverRoutes = async (driverId: number): Promise<DriverRoute[]> => {
+export const getDriverRoutes = async (driverId: string): Promise<DriverRoute[]> => {
     console.log(`Fetching current routes for driver ${driverId}...`);
 
     const response = await fetch(`/api/get-driver-routes/${driverId}/`, {
@@ -48,7 +28,8 @@ export const getDriverRoutes = async (driverId: number): Promise<DriverRoute[]> 
         to: route.to_location,
         departureTime: route.departure_time,
         costPerSeat: parseFloat(route.cost_per_seat),
-        activeDays: route.active_days
+        activeDays: route.active_days,
+        totalSeats:route.total_seats
     }));
 };
 
@@ -82,7 +63,8 @@ export const addDriverRoute = async (
         to: data.to,
         departureTime: data.departureTime,
         costPerSeat: data.costPerSeat,
-        activeDays: data.activeDays
+        activeDays: data.activeDays,
+        totalSeats:data.totalSeats
     };
 };
 
@@ -116,7 +98,9 @@ export const updateDriverRoute = async (driverId: number, routeData: DriverRoute
         to: data.to_location,
         departureTime: data.departure_time,
         costPerSeat: parseFloat(data.cost_per_seat),
-        activeDays: data.active_days
+        activeDays: data.active_days,
+        totalSeats:data.total_seats
+
     };
 };
 

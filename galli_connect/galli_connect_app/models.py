@@ -22,10 +22,12 @@ class DriverRoute(models.Model):
     to_location = models.CharField(max_length=255)
     departure_time = models.CharField(max_length=50)  # or DateTimeField if needed
     cost_per_seat = models.DecimalField(max_digits=10, decimal_places=2)
+    total_seats = models.IntegerField(default=2)
     active_days = models.JSONField()  # store list like ["Monday", "Wednesday"]
 
     def __str__(self):
         return f"{self.driver.username}: {self.from_location} -> {self.to_location}"
+
 
 
 

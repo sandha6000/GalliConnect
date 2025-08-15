@@ -11,24 +11,19 @@ export interface User {
   role: UserMode;
 }
 
-export interface Shuttle {
-  id: string;
-  name: string;
-  driverName: string;
-  departureTime: string;
-  arrivalTime: string;
-  availableSeats: number;
-  totalSeats: number;
-  price: number;
-  route: [string, string];
-}
-
 export interface Booking {
   bookingId: string;
-  shuttle: Shuttle;
+  driverName: string;
+  routeInfo: {
+    from: string;
+    to: string;
+    departureTime: string;
+  };
   seats: number;
+  dates: string[];
   totalPrice: number;
 }
+
 
 export interface TripRequest {
   id: string;
@@ -55,14 +50,10 @@ export interface AiAnalysisResult {
   optimizedRoute: OptimizedRouteData;
 }
 
-export enum WeekDay {
-    MONDAY = 'Mon',
-    TUESDAY = 'Tue',
-    WEDNESDAY = 'Wed',
-    THURSDAY = 'Thu',
-    FRIDAY = 'Fri',
-    SATURDAY = 'Sat',
-    SUNDAY = 'Sun',
+export interface DailySchedule {
+    date: string; // YYYY-MM-DD
+    day: string; // e.g., 'Mon', 'Tue'
+    availableSeats: number;
 }
 
 export interface DriverRoute {
@@ -71,5 +62,11 @@ export interface DriverRoute {
   to: string;
   departureTime: string;
   costPerSeat: number;
-  activeDays: WeekDay[];
+  activeDays: DailySchedule[];
+  totalSeats: number;
+}
+
+export interface PassengerRouteView extends DriverRoute {
+    driverId: string;
+    driverName: string;
 }

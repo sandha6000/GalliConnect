@@ -104,6 +104,7 @@ def add_driver_route(request):
             departure_time = data.get("departureTime")
             cost_per_seat = data.get("costPerSeat")
             active_days = data.get("activeDays")
+            total_seats = data.get("totalSeats")
 
             driver = User.objects.filter(id=driver_id).first()
             if not driver:
@@ -115,7 +116,8 @@ def add_driver_route(request):
                 to_location=to_location,
                 departure_time=departure_time,
                 cost_per_seat=cost_per_seat,
-                active_days=active_days
+                active_days=active_days,
+                total_seats = total_seats
             )
 
             return JsonResponse({
@@ -151,7 +153,8 @@ def get_driver_routes(request, driver_id):
                 "to_location": route.to_location,
                 "departure_time": route.departure_time,
                 "cost_per_seat": str(route.cost_per_seat),
-                "active_days": route.active_days
+                "active_days": route.active_days,
+                "total_seats": route.total_seats
             }
             for route in routes
         ]
@@ -220,6 +223,47 @@ def delete_driver_route(request, driver_id, route_id):
         return JsonResponse({"message": "Route deleted successfully"}, status=200)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def search_routes(request):
+    if request.method != "POST":
+        return JsonResponse({"message": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        from_location = data.get("from")
+        to_location = data.get("to")
+
+        if not from_location or not to_location:
+            return JsonResponse({"message": "Both 'from' and 'to' locations are required"}, status=400)
+
+        # Query matching routes (case-insensitive match)
+        routes = DriverRoute.objects.filter(
+            from_location__icontains=from_location,
+            to_location__icontains=to_location
+        )
+
+        # Format response
+        results = []
+        for route in routes:
+            results.append({
+                "id": route.id,
+                "from": route.from_location,
+                "to": route.to_location,
+                "departureTime": route.departure_time,
+                "costPerSeat": float(route.cost_per_seat),
+                "activeDays": route.active_days,
+                "totalSeats": route.total_seats,
+                "driverId": route.driver.id,
+                "driverName": route.driver.username  # You can change this to full_name if stored
+            })
+
+        return JsonResponse(results, safe=False)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=500)
 
 
 def logout_view(request):
