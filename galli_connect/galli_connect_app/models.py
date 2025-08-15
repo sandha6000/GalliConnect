@@ -27,6 +27,16 @@ class DriverRoute(models.Model):
 
     def __str__(self):
         return f"{self.driver.username}: {self.from_location} -> {self.to_location}"
+    
+class PassengerBooking(models.Model):
+    passenger = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    route = models.ForeignKey(DriverRoute, on_delete=models.CASCADE, related_name="bookings")
+    date = models.DateField()
+    seats_booked = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.passenger.username} booked {self.seats_booked} seats on {self.date} for {self.route}"
+
 
 
 

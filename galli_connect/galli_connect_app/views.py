@@ -6,9 +6,11 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
+from django.utils.dateparse import parse_date
+from datetime import datetime
 from .models import UserProfile  # import the profile model
 from .models import DriverRoute
-
+from .models import PassengerBooking
 
 import json
 from django.http import JsonResponse
@@ -259,6 +261,68 @@ def search_routes(request):
             })
 
         return JsonResponse(results, safe=False)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=500)
+    
+@csrf_exempt
+def book_seats(request):
+    if request.method != "POST":
+        return JsonResponse({"message": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        driver_id = data.get("driverId")
+        route_id = data.get("routeId")
+        dates = data.get("dates", [])
+        seats_to_book = int(data.get("seatsToBook", 0))
+
+        if not (driver_id and route_id and dates and seats_to_book):
+            return JsonResponse({"message": "Missing booking details"}, status=400)
+
+        # Find the route
+        try:
+            route = DriverRoute.objects.get(id=route_id, driver_id=driver_id)
+        except DriverRoute.DoesNotExist:
+            return JsonResponse({"message": "Route not found"}, status=404)
+
+        # Ensure active_days structure is correct
+        active_days = route.active_days  # Example: [{"date": "2025-08-15", "availableSeats": 3}, ...]
+
+        # First check seat availability
+        for date_str in dates:
+            day_schedule = next((d for d in active_days if d["date"] == date_str), None)
+            if not day_schedule or day_schedule["availableSeats"] < seats_to_book:
+                return JsonResponse({"message": f"Not enough seats available on {date_str}"}, status=400)
+
+        # Reduce seats & save booking
+        passenger = request.user  # This assumes user is logged in
+        for date_str in dates:
+            day_schedule = next((d for d in active_days if d["date"] == date_str), None)
+            if day_schedule:
+                day_schedule["availableSeats"] -= seats_to_book
+                PassengerBooking.objects.create(
+                    passenger=passenger,
+                    route=route,
+                    date=parse_date(date_str),
+                    seats_booked=seats_to_book
+                )
+
+        # Save updated active_days
+        route.active_days = active_days
+        route.save()
+
+        return JsonResponse({
+            "id": route.id,
+            "from": route.from_location,
+            "to": route.to_location,
+            "departureTime": route.departure_time,
+            "costPerSeat": float(route.cost_per_seat),
+            "totalSeats": route.total_seats,
+            "activeDays": route.active_days
+        })
 
     except json.JSONDecodeError:
         return JsonResponse({"message": "Invalid JSON"}, status=400)

@@ -11,6 +11,8 @@ urlpatterns = [
     path('api/update-driver-route/<int:driver_id>/<int:route_id>/', views.update_driver_route, name='update_driver_route'),
     path('api/delete-driver-route/<int:driver_id>/<int:route_id>/', views.delete_driver_route, name='delete_driver_route'),
     path('api/routes/search', views.search_routes, name='search_routes'),
+    path('api/book-seats', views.book_seats, name='book_seats'),
+
 
 ]
 

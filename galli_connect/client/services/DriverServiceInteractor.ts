@@ -1,6 +1,5 @@
 
 import type { DriverRoute } from '../types';
-import { mockDriverRoutes } from './PassengerServiceInteractor';
 
 // Simulate network latency
 const delay = <T,>(data: T, ms = 500): Promise<T> => {

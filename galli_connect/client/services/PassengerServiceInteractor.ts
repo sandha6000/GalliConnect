@@ -19,94 +19,33 @@ const createUpcomingSchedule = (days: { dayOffset: number, seats: number }[], to
     });
 };
 
-
-// Mock database for a driver's routes, keyed by driver ID
-export const mockDriverRoutes: Record<string, DriverRoute[]> = {
-    'user-123': [ // This ID matches the mock driver from services/api.ts
-        {
-            id: 'route-123',
-            from: 'Peenya Industrial Area',
-            to: 'Majestic Bus Stand',
-            departureTime: '08:00 AM',
-            costPerSeat: 50,
-            activeDays: createUpcomingSchedule([
-                { dayOffset: 0, seats: 12 },
-                { dayOffset: 1, seats: 10 },
-                { dayOffset: 2, seats: 12 },
-                { dayOffset: 3, seats: 8 },
-                { dayOffset: 4, seats: 5 },
-                { dayOffset: 5, seats: 12 },
-                { dayOffset: 6, seats: 12 },
-            ], 12),
-            totalSeats: 12,
-        },
-        {
-            id: 'route-456',
-            from: 'Electronic City',
-            to: 'Marathahalli',
-            departureTime: '09:00 AM',
-            costPerSeat: 45,
-            activeDays: createUpcomingSchedule([
-                { dayOffset: 0, seats: 10 },
-                { dayOffset: 1, seats: 10 },
-                { dayOffset: 2, seats: 9 },
-                { dayOffset: 3, seats: 0 },
-                { dayOffset: 4, seats: 4 },
-                { dayOffset: 5, seats: 10 },
-                { dayOffset: 6, seats: 10 },
-            ], 10),
-            totalSeats: 10,
-        }
-    ]
-};
-
 interface SearchResult {
     driverId: string;
     route: DriverRoute;
 }
 
-const searchRoutesByLocation = async (from: string, to: string): Promise<SearchResult[]> => {
-    const results: SearchResult[] = [];
-    Object.keys(mockDriverRoutes).forEach(driverId => {
-        const routes = mockDriverRoutes[driverId];
-        routes.forEach(route => {
-            if (route.from.toLowerCase().includes(from.toLowerCase()) && route.to.toLowerCase().includes(to.toLowerCase())) {
-                results.push({ driverId, route });
-            }
-        });
+
+
+export const bookSeatsForDates = async (
+    driverId: string,
+    routeId: string,
+    dates: string[],
+    seatsToBook: number
+): Promise<DriverRoute> => {
+    const response = await fetch('/api/book-seats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driverId, routeId, dates, seatsToBook }),
     });
-    return delay(results, 600);
-};
 
-const bookSeatsForDates = async (driverId: string, routeId: string, dates: string[], seatsToBook: number): Promise<DriverRoute> => {
-    const driverRoutes = mockDriverRoutes[driverId];
-    if (!driverRoutes) throw new Error("Driver not found");
-
-    const route = driverRoutes.find(r => r.id === routeId);
-    if (!route) throw new Error("Route not found");
-
-    // Check if all bookings are possible first
-    for (const date of dates) {
-        const daySchedule = route.activeDays.find(d => d.date === date);
-        if (!daySchedule || daySchedule.availableSeats < seatsToBook) {
-            throw new Error(`Booking failed: Not enough seats available on ${date}.`);
-        }
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Booking failed');
     }
 
-    // If all checks pass, update the availability
-    dates.forEach(date => {
-        const daySchedule = route.activeDays.find(d => d.date === date)!;
-        daySchedule.availableSeats -= seatsToBook;
-    });
-
-    return delay({ ...route }, 400); // Return updated route
+    return await response.json();
 };
 
-
-// A map to get driver names from IDs for the passenger view
-const mockDriverDetails: Record<string, { name: string }> = {
-    'user-123': { name: 'Ramesh Kumar' }
-};
 
 export const findRoutes = async (from: string, to: string): Promise<PassengerRouteView[]> => {
     console.log(`Searching for routes from ${from} to ${to}`);
