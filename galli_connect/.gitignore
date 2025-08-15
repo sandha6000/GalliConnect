@@ -16,3 +16,12 @@ db.sqlite3
 # Django static/media (if generated locally)
 staticfiles/
 media/
+
+
+# client
+templates/
+client/.package-lock.hash
+
+#migrations
+galli_connect_app/migrations/
+
