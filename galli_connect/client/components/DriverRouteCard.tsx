@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { DriverRoute } from '../types';
 import { Card } from './common/Card';
@@ -30,7 +29,7 @@ export const DriverRouteCard: React.FC<DriverRouteCardProps> = ({ route, onEdit,
                 <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
                         <div className="flex items-center text-slate-700 font-semibold text-lg">
-                            <span className="text-indigo-600">{LOCATION_ICON}</span>
+                            <span className="text-primary">{LOCATION_ICON}</span>
                             <p className="ml-2">{route.from} &rarr; {route.to}</p>
                         </div>
                         <div className="flex items-center gap-x-6 mt-2">
@@ -45,7 +44,7 @@ export const DriverRouteCard: React.FC<DriverRouteCardProps> = ({ route, onEdit,
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-2xl font-bold text-indigo-600">₹{route.costPerSeat}</p>
+                        <p className="text-2xl font-bold text-primary">₹{route.costPerSeat}</p>
                         <p className="text-xs text-slate-500">per seat</p>
                     </div>
                 </div>

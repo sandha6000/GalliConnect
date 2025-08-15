@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Modal } from './common/Modal';
 import { Input } from './common/Input';
@@ -23,7 +22,7 @@ interface DayButtonProps {
 
 const DayButton: React.FC<DayButtonProps> = ({ day, dayOfMonth, isSelected, onClick }) => {
     const baseClasses = "p-2 text-center font-semibold rounded-md transition-all duration-200 flex-1 min-w-[50px] border";
-    const selectedClasses = "bg-indigo-600 text-white shadow-sm border-indigo-600";
+    const selectedClasses = "bg-primary text-white shadow-sm border-primary";
     const unselectedClasses = "bg-white text-slate-700 hover:bg-slate-100 border-slate-300";
     return (
         <button type="button" onClick={onClick} className={`${baseClasses} ${isSelected ? selectedClasses : unselectedClasses}`}>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Booking } from '../types';
 import { Card } from './common/Card';
@@ -23,7 +22,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookin
             <p className="mt-2 text-slate-600">Your seats are reserved. Get ready for a comfortable ride.</p>
 
             <div className="mt-6 text-left bg-slate-50 p-4 rounded-lg border border-slate-200">
-                <h3 className="font-bold text-lg text-indigo-700 flex items-center">{BUS_ICON} <span className="ml-2">{booking.driverName}'s Shuttle</span></h3>
+                <h3 className="font-bold text-lg text-primary-dark flex items-center">{BUS_ICON} <span className="ml-2">{booking.driverName}'s Shuttle</span></h3>
                 <p className="text-slate-600 mt-2"><strong>Route:</strong> {booking.routeInfo.from} to {booking.routeInfo.to}</p>
                 <p className="text-slate-600"><strong>Time:</strong> {booking.routeInfo.departureTime}</p>
                 <p className="text-slate-600"><strong>Seats Booked:</strong> {booking.seats}</p>
@@ -32,7 +31,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ bookin
                     <strong className="text-slate-700">Booked Dates:</strong>
                     <div className="flex flex-wrap gap-2 mt-2">
                         {booking.dates.map(date => (
-                            <span key={date} className="bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full">
+                            <span key={date} className="bg-primary-light text-primary-dark text-sm font-semibold px-3 py-1 rounded-full">
                                 {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                             </span>
                         ))}

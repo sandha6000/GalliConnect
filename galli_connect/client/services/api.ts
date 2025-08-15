@@ -1,16 +1,7 @@
 
 import type { TripRequest, User, UserMode } from '../types';
 
-const mockTripRequests: TripRequest[] = [
-    { id: 'req-1', from: 'Jalahalli Cross', to: 'Goraguntepalya', time: '07:30 AM' },
-    { id: 'req-2', from: 'Peenya 1st Stage', to: 'Majestic Bus Stand', time: '07:45 AM' },
-    { id: 'req-3', from: 'Dasarahalli', to: 'Yeshwanthpur', time: '08:00 AM' },
-    { id: 'req-4', from: 'Peenya Industrial Area', to: 'Sandal Soap Factory Metro', time: '07:50 AM' },
-    { id: 'req-5', from: 'Jalahalli', to: 'Malleshwaram', time: '08:10 AM' },
-    { id: 'req-6', from: 'Yeshwanthpur Industry', to: 'Majestic Bus Stand', time: '08:20 AM' },
-    { id: 'req-7', from: 'Peenya 2nd Stage', to: 'Rajajinagar', time: '07:55 AM' },
-    { id: 'req-8', from: 'TVS Cross', to: 'Okalipuram', time: '08:05 AM' },
-];
+
 
 // Simulate network latency
 const delay = <T,>(data: T, ms = 500): Promise<T> => {
@@ -57,14 +48,28 @@ export const signup = async (
     if (!name || !email || !password || password.length < 1) {
         throw new Error('Name, email, and password are required');
     }
-    // Mimic API call
-    await delay({}, 1000);
-    return {
-        id: `user-${Date.now()}`,
-        name: name,
-        email: email,
-        role: role,
-    };
+
+    const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Signup failed');
+    }
+
+    const data = await response.json();
+    return data as User;
+};
+
+export const findShuttles = async (from: string, to: string): Promise<Shuttle[]> => {
+  console.log(`Searching for shuttles from ${from} to ${to}`);
+  const results = mockShuttles.filter(s => s.route[0].toLowerCase().includes(from.toLowerCase()) && s.route[1].toLowerCase().includes(to.toLowerCase()));
+  return delay(results, 800);
 };
 
 export const getTripRequests = async (): Promise<TripRequest[]> => {

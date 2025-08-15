@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '../common/Button';
 import { Card } from '../common/Card';
@@ -6,7 +5,7 @@ import { Input } from '../common/Input';
 import { login } from '../../services/api';
 import { UserMode } from '../../types';
 import type { User } from '../../types';
-import { BUS_ICON } from '../../constants';
+import { NAGARAYATRA_LOGO } from '../../constants';
 
 interface LoginPageProps {
     onLogin: (user: User) => void;
@@ -18,7 +17,7 @@ const RoleSelectorButton: React.FC<{
   isActive: boolean;
   children: React.ReactNode;
 }> = ({ onClick, isActive, children }) => {
-  const activeClasses = 'bg-indigo-600 text-white shadow-sm';
+  const activeClasses = 'bg-primary text-white shadow-sm';
   const inactiveClasses = 'text-slate-600 bg-white hover:bg-slate-50';
   return (
     <button
@@ -53,10 +52,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSwitchToSignup 
     };
     
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4">
-             <div className="flex items-center text-3xl font-bold text-indigo-600 mb-6">
-                {BUS_ICON}
-                <span className="ml-2">Local Commute</span>
+        <div className="min-h-screen bg-bg-base flex flex-col justify-center items-center p-4">
+             <div className="flex flex-col items-center mb-6">
+                <NAGARAYATRA_LOGO className="w-40" />
+                <h1 className="text-4xl font-bold text-slate-800 tracking-tight mt-2">Nagarayatra</h1>
+                <p className="text-slate-500">Making every city ride simple.</p>
             </div>
             <Card className="w-full max-w-md">
                 <div className="p-8">
@@ -108,7 +108,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSwitchToSignup 
                 <div className="bg-slate-50 px-8 py-4 text-center border-t border-slate-200">
                     <p className="text-sm text-slate-600">
                         Don't have an account?{' '}
-                        <button onClick={onSwitchToSignup} className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <button onClick={onSwitchToSignup} className="font-medium text-primary hover:text-primary-hover">
                             Sign up
                         </button>
                     </p>

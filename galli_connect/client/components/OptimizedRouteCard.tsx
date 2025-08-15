@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { OptimizedRouteData } from '../types';
 import { Card } from './common/Card';
@@ -11,12 +10,12 @@ interface OptimizedRouteCardProps {
 export const OptimizedRouteCard: React.FC<OptimizedRouteCardProps> = ({ routeData }) => {
   return (
     <Card className="mt-8">
-      <div className="p-5 bg-indigo-600 text-white">
+      <div className="p-5 bg-primary text-white">
         <div className="flex items-center">
             {SPARKLES_ICON}
             <h3 className="text-xl font-bold ml-2">AI-Optimized Route</h3>
         </div>
-        <p className="text-sm text-indigo-200 mt-1">{routeData.routeName}</p>
+        <p className="text-sm text-orange-100 mt-1">{routeData.routeName}</p>
       </div>
       <div className="p-5">
         <div className="mb-4">

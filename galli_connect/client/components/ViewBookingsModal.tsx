@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Modal } from './common/Modal';
 import { Spinner } from './common/Spinner';
@@ -62,7 +61,7 @@ export const ViewBookingsModal: React.FC<ViewBookingsModalProps> = ({ isOpen, on
                         return (
                             <div key={schedule.date}>
                                 <button 
-                                    className={`w-full text-left p-3 rounded-lg border transition-all duration-200 ${isSelected ? 'bg-indigo-50 border-indigo-300 shadow-sm' : 'bg-white hover:bg-slate-50 border-slate-200'}`}
+                                    className={`w-full text-left p-3 rounded-lg border transition-all duration-200 ${isSelected ? 'bg-primary-light/50 border-orange-300 shadow-sm' : 'bg-white hover:bg-slate-50 border-slate-200'}`}
                                     onClick={() => handleDateClick(schedule.date)}
                                     aria-expanded={isSelected}
                                 >
@@ -73,13 +72,13 @@ export const ViewBookingsModal: React.FC<ViewBookingsModalProps> = ({ isOpen, on
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className={`font-bold text-lg ${seatsBooked > 0 ? 'text-indigo-600' : 'text-slate-600'}`}>{seatsBooked} / {route.totalSeats}</p>
+                                            <p className={`font-bold text-lg ${seatsBooked > 0 ? 'text-primary' : 'text-slate-600'}`}>{seatsBooked} / {route.totalSeats}</p>
                                             <p className="text-xs text-slate-500">Seats Filled</p>
                                         </div>
                                     </div>
                                 </button>
                                 {isSelected && (
-                                    <div className="bg-slate-50 p-4 mt-[-2px] rounded-b-lg border border-t-0 border-indigo-200 animate-fade-in">
+                                    <div className="bg-slate-50 p-4 mt-[-2px] rounded-b-lg border border-t-0 border-orange-200 animate-fade-in">
                                         <h4 className="font-semibold text-sm text-slate-700 mb-2">Passengers Booked:</h4>
                                         {bookingsForDate.length > 0 ? (
                                             <ul className="list-disc list-inside space-y-1 text-sm">

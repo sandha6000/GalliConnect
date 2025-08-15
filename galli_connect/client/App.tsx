@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserMode } from './types';
 import type { User } from './types';
@@ -24,9 +23,9 @@ const Header: React.FC<{
     return (
         <header className="bg-white shadow-sm sticky top-0 z-40">
             <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-                <div className="flex items-center text-2xl font-bold text-indigo-600">
+                <div className="flex items-center text-2xl font-bold text-primary">
                     {BUS_ICON}
-                    <span className="ml-2 hidden sm:inline">Local Commute</span>
+                    <span className="ml-2 hidden sm:inline">Nagarayatra</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
                      <span className="text-sm font-semibold text-slate-700 hidden sm:block">
@@ -77,7 +76,7 @@ const App: React.FC = () => {
           : <DriverView currentUser={currentUser} />;
       
       return (
-          <div className="min-h-screen bg-slate-100">
+          <div className="min-h-screen bg-bg-base/60">
               <Header currentUser={currentUser} onLogout={handleLogout} />
               <main>
                   {dashboard}

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo } from 'react';
 import type { PassengerRouteView, Booking, DailySchedule } from '../types';
 import { findRoutes, bookRouteForDates } from '../services/PassengerServiceInteractor';
@@ -19,13 +18,13 @@ interface DayButtonProps {
 
 const DayButton: React.FC<DayButtonProps> = ({ day, dayOfMonth, isSelected, onClick, disabled, availableSeats }) => {
     const baseClasses = "relative p-2 text-center font-semibold rounded-md transition-all duration-200 flex-1 min-w-[60px] border disabled:opacity-50 disabled:cursor-not-allowed";
-    const selectedClasses = "bg-indigo-600 text-white shadow-sm border-indigo-600";
+    const selectedClasses = "bg-primary text-white shadow-sm border-primary";
     const unselectedClasses = "bg-white text-slate-700 hover:bg-slate-100 border-slate-300";
     return (
         <button type="button" onClick={onClick} disabled={disabled} className={`${baseClasses} ${isSelected ? selectedClasses : unselectedClasses}`}>
             <span className="block text-xs font-medium">{day}</span>
             <span className="block text-xl font-bold mt-1">{dayOfMonth}</span>
-            <span className={`absolute -top-2 -right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white text-indigo-700' : 'bg-slate-200 text-slate-600'}`}>
+            <span className={`absolute -top-2 -right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white text-primary-dark' : 'bg-slate-200 text-slate-600'}`}>
                 {availableSeats}
             </span>
         </button>
@@ -67,14 +66,14 @@ const RouteFinder: React.FC<{
           value={from}
           onChange={(e) => setFrom(e.target.value)}
           placeholder="From"
-          className="md:col-span-2 w-full px-4 py-3 rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500"
+          className="md:col-span-2 w-full px-4 py-3 rounded-lg border-slate-300 focus:ring-primary focus:border-primary"
         />
         <input
           type="text"
           value={to}
           onChange={(e) => setTo(e.target.value)}
           placeholder="To"
-          className="md:col-span-2 w-full px-4 py-3 rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500"
+          className="md:col-span-2 w-full px-4 py-3 rounded-lg border-slate-300 focus:ring-primary focus:border-primary"
         />
         <Button type="submit" isLoading={isLoading} className="md:col-span-1 h-full">
           Search
@@ -83,7 +82,7 @@ const RouteFinder: React.FC<{
       <div className="mt-4">
           <span className="text-sm text-slate-600 mr-2">Popular routes:</span>
           {popularRoutes.map((route, idx) => (
-              <button key={idx} onClick={() => handlePopularRouteClick(route.from, route.to)} className="text-sm text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-full px-3 py-1 mr-2 mb-2 transition">
+              <button key={idx} onClick={() => handlePopularRouteClick(route.from, route.to)} className="text-sm text-primary hover:text-primary-hover bg-primary-light hover:bg-orange-200 rounded-full px-3 py-1 mr-2 mb-2 transition">
                   {route.from} &rarr; {route.to}
               </button>
           ))}
@@ -287,7 +286,7 @@ export const PassengerView: React.FC = () => {
                         <span>Selected Days</span>
                         <span>{selectedDates.size}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xl font-bold mt-2 text-indigo-700">
+                    <div className="flex justify-between items-center text-xl font-bold mt-2 text-primary-dark">
                         <span>Total Price</span>
                         <span>₹{totalPrice}</span>
                     </div>

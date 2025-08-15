@@ -30,13 +30,13 @@ export const ShuttleCard: React.FC<ShuttleCardProps> = ({ route, onBook, onBookS
         <div className="flex justify-between items-start">
           <div>
             <div className="flex items-center text-slate-700 font-semibold text-lg">
-                <span className="text-indigo-600">{LOCATION_ICON}</span>
+                <span className="text-primary">{LOCATION_ICON}</span>
                 <p className="ml-2">{route.from} &rarr; {route.to}</p>
             </div>
             <p className="text-sm text-slate-500 mt-1">Driver: <span className="font-medium">{route.driverName}</span></p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-indigo-600">₹{route.costPerSeat}</p>
+            <p className="text-2xl font-bold text-primary">₹{route.costPerSeat}</p>
             <p className="text-xs text-slate-500">per seat</p>
           </div>
         </div>
@@ -67,7 +67,7 @@ export const ShuttleCard: React.FC<ShuttleCardProps> = ({ route, onBook, onBookS
                             onClick={() => !isDisabled && onBookSingleDay(route, schedule.date)}
                             disabled={isDisabled}
                             aria-label={`Book for ${schedule.day}, ${displayDate}`}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all duration-200 flex items-center justify-center min-w-[130px] ${getAvailabilityColor(schedule.availableSeats, route.totalSeats)} ${isDisabled ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'}`}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all duration-200 flex items-center justify-center min-w-[130px] ${getAvailabilityColor(schedule.availableSeats, route.totalSeats)} ${isDisabled ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'}`}
                         >
                              {isLoading ? (
                                 <>
