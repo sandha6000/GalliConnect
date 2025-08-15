@@ -2,26 +2,25 @@
 __pycache__/
 *.pyc
 
-# Virtualenv
+# Virtual environment
 .venv/
+../.venv/
 
 # Node
 node_modules/
 client/node_modules/
 client/.parcel-cache/
-
-# SQLite DB
-db.sqlite3
-
-# Django static/media (if generated locally)
-staticfiles/
-media/
-
-
-# client
-templates/
 client/.package-lock.hash
 
-#migrations
-galli_connect_app/migrations/
+# SQLite database
+db.sqlite3
 
+# Django migrations (optional — if you don’t want to track auto-generated ones)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Templates (if generated — remove if they are your actual HTML templates)
+templates/
+
+# OS files
+.DS_Store
